@@ -1,7 +1,7 @@
 {
-  "name": "rail-app",
+  "name": "chat-app",
   "version": "1.0.1",
-  "description": "Rail App Api",
+  "description": "Chat App Api",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -16,7 +16,8 @@
     "jsonwebtoken": "^8.2.0",
     "mongoose": "^5.0.9",
     "passport": "^0.4.0",
-    "passport-jwt": "^3.0.1"
+    "passport-jwt": "^3.0.1",
+    "socket.io": "^2.1.0"
   },
   "author": "Prince",
   "license": "ISC"
