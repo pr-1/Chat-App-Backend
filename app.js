@@ -5,7 +5,8 @@ const cors = require('cors');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const config = require('./config/database');
-
+const socketIo = require('socket.io');
+const http = require('http');
 // Connect To Database
 mongoose.Promise = require('bluebird');
 mongoose.connect(config.database, { promiseLibrary: require('bluebird') })
@@ -13,7 +14,18 @@ mongoose.connect(config.database, { promiseLibrary: require('bluebird') })
   .catch((err) => console.log(`Database error: ${err}`));
 
 const app = express();
-
+const server = http.createServer(app);
+let io  = socketIo(server);
+io.on('connection', (socket) => {
+  console.log('user connected');
+socket.on('new-message', (message) => {
+  console.log(message);
+  io.emit('new-message', message);
+});
+socket.on('disconnect', (reason)=> {
+  console.log(reason);
+});
+});
 const users = require('./routes/users');
 
 
@@ -40,6 +52,6 @@ app.get('/', (req, res) => {
 });
 
 // Start Server
-app.listen(process.env.PORT || 3000, function(){
+server.listen(process.env.PORT || 3000, function(){
   console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
 });
