@@ -15,17 +15,7 @@ mongoose.connect(config.database, { promiseLibrary: require('bluebird') })
 
 const app = express();
 const server = http.createServer(app);
-let io  = socketIo(server);
-io.on('connection', (socket) => {
-  console.log('user connected');
-socket.on('new-message', (message) => {
-  console.log(message);
-  io.emit('new-message', message);
-});
-socket.on('disconnect', (reason)=> {
-  console.log(reason);
-});
-});
+const io  = socketIo(server);
 const users = require('./routes/users');
 
 
@@ -41,7 +31,7 @@ app.use(bodyParser.json());
 // Passport Middleware
 app.use(passport.initialize());
 app.use(passport.session());
-
+require('./sockets/groupchat')(io);
 require('./config/passport')(passport);
 
 app.use('/users', users);
