@@ -153,5 +153,8 @@ router.post('/update-profile', (req, res) => {
   });
 
 });
+router.get('/authenticate', passport.authenticate('jwt', {session:false}), (req, res) => {
+    return res.json({success: true, user: req.user});
+});
 
 module.exports = router;
