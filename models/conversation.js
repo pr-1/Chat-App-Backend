@@ -1,23 +1,21 @@
 const mongoose = require('mongoose');
-import { User } from './user';
+const ConvUser = {
+    id: {
+        type: String
+    },
+    email: {
+        type: String
+    },
+    name: {
+        type: String
+    }
+}
 const ConversationSchema = mongoose.Schema({
     participants: {
-        type: [User]
+        type: [ConvUser]
     }   
   });
 const Conversation = module.exports = mongoose.model('Conversation', ConversationSchema);
-let newConv = new Conversation({
-    participants: [
-        {
-            name: "Prince",
-            email: "Testing@a.com"
-        }
-    ]
-});
-newConv.create((err, conv) => {
-    if (err) {
-        console.log('error');
-    } else {
-        console.log(conv);
-    }
-});
+module.exports.addConv = (newConv, callback) => {
+    newConv.save(callback);
+}

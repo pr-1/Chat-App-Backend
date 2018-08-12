@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
-const User = require('../models/user');
+const UserModule = require('../models/user');
+const User = UserModule.User;
 
 router.post('/register', (req, res) => {
   let newUser = new User({
@@ -12,7 +13,7 @@ router.post('/register', (req, res) => {
     email: req.body.email,
     password: req.body.password
   });
-  User.getUserByEmail(newUser.email, (err, user) => {
+  UserModule.getUserByEmail(newUser.email, (err, user) => {
     if (err) throw err;
     if (user) {
       return res.json({
@@ -20,7 +21,7 @@ router.post('/register', (req, res) => {
         message: 'User Already registered'
       });
     }
-    User.addUser(newUser, (err, user) => {
+    UserModule.addUser(newUser, (err, user) => {
       if (err) {
         res.json({
           success: false,
@@ -38,10 +39,11 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
+  console.log(User);
   const email = req.body.email;
   const password = req.body.password;
 
-  User.getUserByEmail(email, (err, user) => {
+  UserModule.getUserByEmail(email, (err, user) => {
     if (err) throw err;
     if (!user) {
       return res.json({
@@ -50,7 +52,7 @@ router.post('/login', (req, res) => {
       });
     }
 
-    User.comparePassword(password, user.password, (err, isMatch) => {
+    UserModule.comparePassword(password, user.password, (err, isMatch) => {
       if (err) throw err;
       if (isMatch) {
         const token = jwt.sign({
@@ -83,10 +85,10 @@ router.post('/change-password', (req, res) => {
   const oldPassword = req.body.oldPassword;
   const newPassword = req.body.newPassword;
 
-  User.getUserById(id, (err, user) => {
+  UserModule.getUserById(id, (err, user) => {
     if (err) throw err;
     if (user) {
-      User.comparePassword(oldPassword, user.password, (err, isMatch) => {
+      UserModule.comparePassword(oldPassword, user.password, (err, isMatch) => {
         if (err) throw err;
         if (isMatch) {
           user.password = newPassword;
@@ -124,7 +126,7 @@ router.post('/update-profile', (req, res) => {
   const id = req.body.id;
   const name = req.body.name;
   const profile_url = req.body.profile_url;
-  User.getUserById(id, (err, user) => {
+  UserModule.getUserById(id, (err, user) => {
     if (err) {
       if (!user) {
         res.json({

@@ -21,13 +21,13 @@ const UserSchema = mongoose.Schema({
     default: ''
   }
 });
-const User = module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
 
-module.exports.getUserById = function(id, callback){
+const getUserById = function(id, callback){
   User.findById(id, callback);
 }
 
-module.exports.addUser = function(newUser, callback){
+const addUser = function(newUser, callback){
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(newUser.password, salt, (err, hash) => {
         if(err) throw err;
@@ -36,13 +36,21 @@ module.exports.addUser = function(newUser, callback){
       });
     });
   }
-  module.exports.getUserByEmail = function(email, callback){
+ const getUserByEmail = function(email, callback){
     const query = {email: email}
     User.findOne(query, callback);
   }
-module.exports.comparePassword = function(candidatePassword, hash, callback){
+const comparePassword = function(candidatePassword, hash, callback){
     bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
       if(err) throw err;
       callback(null, isMatch);
     });
+}
+module.exports = {
+  UserSchema: UserSchema,
+  User: User,
+  getUserByEmail: getUserByEmail,
+  comparePassword: comparePassword,
+  getUserById: getUserById,
+  addUser: addUser
 }
